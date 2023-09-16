@@ -1,12 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 #include <string.h>
 #include <err.h>
 
-#include "include/file_image_io.h"
-#include "include/file_text_io.h"
-#include "include/resolver.h"
-#include "include/gtk.h"
+//#include "include/Sudoku_resolver/resolver.h"
+#include "include/Imagery/Tools/op.h"
+//#include "include/file_text_io.h"
 
 void exit_help(){
 	char help[] = "Usage: path/to/file \n";
@@ -25,7 +24,11 @@ int main(int argc, char** argv){
 	strcpy(path, argv[1]);
 	path[len] = 0;
 
-	window();
+	char path1[] = "./grids/test.jpeg";
+
+	exec_main(path1);
+
+	//window();
 
 	//get_image_data(path);
 
