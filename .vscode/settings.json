@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "op.h": "c",
-        "gtk.h": "c"
+        "gtk.h": "c",
+        "io.h": "c"
     }
 }

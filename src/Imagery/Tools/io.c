@@ -2,11 +2,9 @@
 
 SDL_Surface* Load_SDL_img(const char *path){
 
-	SDL_Surface *surface;
-		
-	surface = IMG_Load(path);
+	SDL_Surface *surface = IMG_Load(path);
 	if (surface == NULL) {
-		printf("Error while loading file : %s \n", IMG_GetError());
+		fprintf(stderr, "Couldn't load %s: %s\n", path, SDL_GetError());
 		return NULL;
 	}
 

@@ -7,6 +7,7 @@
 #include <string.h>
 #include <err.h>
 
+#include "Imagery/Tools/io.h"
 #include "Imagery/Tools/image.h"
 #include "Imagery/Color_Treatment/blackandwhite.h"
 

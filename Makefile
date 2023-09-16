@@ -21,7 +21,7 @@ LGTK = `pkg-config --cflags --libs gtk+-3.0`
 LSDL = -I/usr/include/SDL -lSDL -lSDL_image -lSDLmain
 
 solve: $(CSOLVE) $(CSDL)
-	${CC} ${CFLAGS} -o solve $^ ${INCLUDE_FLAGS} ${LSDL}
+	${CC} ${CFLAGS} -g -o solve $^ ${INCLUDE_FLAGS} ${LSDL}
 	${SUCC}
 
 clean:

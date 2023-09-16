@@ -24,7 +24,7 @@ int main(int argc, char** argv){
 	strcpy(path, argv[1]);
 	path[len] = 0;
 
-	char path1[] = "./grids/test.jpeg";
+	char path1[] = "grids/test.jpeg";
 
 	exec_main(path1);
 
