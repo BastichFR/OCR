@@ -18,7 +18,7 @@ INCLUDE_FLAGS = $(foreach dir,$(INCLUDE_DIRS),-I$(dir))
 
 # Libs
 LGTK = `pkg-config --cflags --libs gtk+-3.0`
-LSDL = -I/usr/include/SDL -lSDL -lSDL_image -lSDLmain
+LSDL = -I/usr/include/SDL2 -lSDL2 -lSDL2_image
 
 solve: $(CSOLVE) $(CSDL)
 	${CC} ${CFLAGS} -g -o solve $^ ${INCLUDE_FLAGS} ${LSDL}
