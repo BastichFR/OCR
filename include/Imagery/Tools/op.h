@@ -10,6 +10,7 @@
 #include "Imagery/Tools/io.h"
 #include "Imagery/Tools/image.h"
 #include "Imagery/Color_Treatment/blackandwhite.h"
+#include "Imagery/Color_Treatment/grayscale.h"
 
 void init_sdl();
 

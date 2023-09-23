@@ -11,8 +11,6 @@ void init_sdl(){
 
 void exec_main(const char *path){
 
-	// TODO : tester une partie du code pour voir d'ou vient le core dumped
-
     init_sdl();
 
     // Load image
@@ -25,9 +23,13 @@ void exec_main(const char *path){
     // Create Image
     Image image = create_image(surface);
 
+    // Apply the grayscale filter
+    grayscale(&image);
+
     // Apply black n white filter
     blackandwhite(&image);
 
+    
     // Recreate surface
     surface = image_to_surface(&image);
 
