@@ -8,7 +8,7 @@ void blackandwhite(Image *image){
 		for(unsigned int x = 0; x < image->width; x++){
 			pixel = image->pixels[x][y];
 			
-			if((pixel.red + pixel.green + pixel.blue)/ 3 >= 127){
+			if((pixel.red + pixel.green + pixel.blue)/ 3 >= 128){
 				image->pixels[x][y].red = 255;
 				image->pixels[x][y].green = 255;
 				image->pixels[x][y].blue = 255;

@@ -29,7 +29,6 @@ void exec_main(const char *path){
     // Apply black n white filter
     blackandwhite(&image);
 
-    
     // Recreate surface
     surface = image_to_surface(&image);
 
