@@ -6,7 +6,7 @@
 #include <SDL2/SDL_image.h>
 #include "Imagery/Tools/pixel.h"
 
-/// @brief Structure thar represent a Pixel of an Image
+/// @brief Structure thar represent a Pixel on the Image
 typedef struct{
     Uint8 red;
     Uint8 green;
@@ -21,13 +21,11 @@ typedef struct {
     Pixel **pixels;
 } Image;
 
-// Create an empty image
 Image create_image(SDL_Surface *surface);
 
-// Apply changes from the Image to the SDL_Surface
 SDL_Surface *image_to_surface(Image *image);
 
-// Free data allocated by the Image
+
 void free_image(Image *image);
 
 #endif // SCREEN_H
