@@ -12,7 +12,6 @@ Image create_image(SDL_Surface *surface){
     // sizeof(Pixel *) => size of the pointer
     image.pixels =  calloc(image.width, sizeof(Pixel *));
 
-
     if (image.pixels == NULL)
     {
         errx(EXIT_FAILURE, "Error while allocating memory");
@@ -31,6 +30,9 @@ Image create_image(SDL_Surface *surface){
 
     for (unsigned int x = 0; x < image.width; x++){
         for (unsigned int y = 0; y < image.height; y++){
+
+            //TODO add average
+
             if(surface == NULL){
                 image.pixels[x][y].red   = 0;
                 image.pixels[x][y].green = 0;

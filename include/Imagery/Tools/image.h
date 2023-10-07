@@ -18,6 +18,7 @@ typedef struct{
 typedef struct {
     unsigned int width;
     unsigned int height;
+    double average;
     Pixel **pixels;
 } Image;
 

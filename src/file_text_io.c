@@ -8,7 +8,7 @@
 
 int extract_data(char path[], size_t board[N][N]){
         
-        FILE *file;
+    FILE *file;
 
 	if (access(path, F_OK) == -1){
 		errx(1, "invalid path : %s\n", path);
