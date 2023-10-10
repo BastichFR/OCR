@@ -2,9 +2,10 @@
 
 
 // Initialize a neuron
-Neuron set_neuron(double value, size_t nb_weights, double* weights) {
+Neuron set_neuron(double value, size_t nb_weights, double* weights, double threshold) {
     Neuron neuron;
     neuron.value = value;
+    neuron.threshold = threshold;
     neuron.nb_weights = nb_weights;
 
     neuron.weights = (double*)calloc(nb_weights, sizeof(double));
@@ -63,6 +64,8 @@ Neural_Network set_network(size_t nb_layers, Layer* layers) {
     return network;
 }
 
+
+
 // Free memory allocated for a neuron
 void free_neuron(Neuron neuron) {
     free(neuron.weights);
@@ -84,9 +87,13 @@ void free_network(Neural_Network network) {
     free(network.layers);
 }
 
-int activation(double value){
-    return value ? value >= 0 : 0;
+
+
+double activation(Neuron neuron){
+    return neuron.value ? neuron.value >= neuron.threshold : 0;
 }
+
+
 
 int feedforward(Neural_Network network, size_t nb_values, double* values)
 {
@@ -113,14 +120,11 @@ int feedforward(Neural_Network network, size_t nb_values, double* values)
             for (size_t id = 0; id < previous_layer.nb_neurons; id++)
             {
                 Neuron p = previous_layer.neurons[id];
-                double val = p.activation(p.value) * neuron[id_neuron].weights[id];
+                double val = p.activation(p) * neuron[id_neuron].weights[id];
                 neuron[id_neuron].value += val;
             }
         }
     }
-
-    // Set output
-
 
     // Get output
     double out_value = 0;
@@ -132,8 +136,5 @@ int feedforward(Neural_Network network, size_t nb_values, double* values)
 
     return out_value;
 }
-
-
-int activation();
 
 void softmax(); 

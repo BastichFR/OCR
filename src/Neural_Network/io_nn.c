@@ -58,7 +58,11 @@ Neural_Network load_nn(char* path) {
     size_t nb_weights;
     double* weights = NULL;
 
+    double threshold = 0;
+
     getline(&line, &len, file);
+    if (sscanf(line, "Threshold %le", &threshold) == 1)
+        getline(&line, &len, file);
     if (sscanf(line, "Layer %d", &nb_layers) == 1) {
         network = set_network(nb_layers, NULL);
         network.nb_layers = nb_layers;
@@ -75,7 +79,7 @@ Neural_Network load_nn(char* path) {
                     double* weights = NULL;
                     parse_neuron_line(line, &value, &weights, &nb_weights);
 
-                    Neuron neuron = set_neuron(value, nb_weights, weights); 
+                    Neuron neuron = set_neuron(value, nb_weights, weights, threshold); 
                     neuron.activation = activation;  
                     this_layer.neurons[id_neuron] = neuron;              
 
@@ -96,6 +100,7 @@ Neural_Network load_nn(char* path) {
 
 
 void show_nn(Neural_Network nn){
+    printf("Threshold %f\n", nn.layers[0].neurons[0].threshold);
     printf("Layer %ld\n", nn.nb_layers);
     for (size_t i = 0; i < nn.nb_layers; i++)
     {

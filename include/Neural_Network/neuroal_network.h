@@ -6,14 +6,13 @@
 #include <err.h>
 
 
-int activation(double value);
-
 typedef struct Neuron
 {
     double value;
-    size_t nb_weights;
+    double threshold;
     double* weights;
-    int (*activation)(double value);
+    size_t nb_weights;
+    double (*activation)(struct Neuron neuron);
 } Neuron;
 
 typedef struct Layer
@@ -28,22 +27,23 @@ typedef struct Neural_Network
     Layer* layers;
 } Neural_Network;
 
-// Initialise or free a Neuron
-Neuron set_neuron(double value, size_t nb_weights, double* weights);
-void free_neuron(Neuron neuron);
 
-// Initialise or free a Layer
+Neuron set_neuron(double value, size_t nb_weights, double* weights, double threshold);
 Layer set_layer(size_t nb_neurons, Neuron* neurons);
-void free_layer(Layer layer);
-
-// Initialise or free a Network
 Neural_Network set_network(size_t nb_layers, Layer* layers);
+
+void free_neuron(Neuron neuron);
+void free_layer(Layer layer);
 void free_network(Neural_Network network);
 
+
+double activation(Neuron neuron);
+
+
+int feedforward(Neural_Network network, size_t nb_values, double* values);
 
 
 void softmax();
 
-int feedforward(Neural_Network network, size_t nb_values, double* values);
 
 #endif
