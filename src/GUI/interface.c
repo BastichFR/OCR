@@ -14,7 +14,6 @@ void start_button(GtkButton *button, gpointer user_data){
 
 int home(){
 
-
     gtk_init();
 
     builder = gtk_builder_new();
@@ -45,7 +44,6 @@ int home(){
     gtk_style_context_add_provider_for_screen(screen,
                                              GTK_STYLE_PROVIDER(cssProvider),
                                              GTK_STYLE_PROVIDER_PRIORITY_USER);
-
 
     return 0;
 }

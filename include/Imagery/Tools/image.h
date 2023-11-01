@@ -18,14 +18,15 @@ typedef struct{
 typedef struct {
     unsigned int width;
     unsigned int height;
-    double average;
-    Pixel **pixels;
+    int          average;
+    Pixel**      pixels;
 } Image;
 
 Image create_image(SDL_Surface *surface);
 
-SDL_Surface *image_to_surface(Image *image);
+Image create_empty_image(size_t width, size_t height);
 
+SDL_Surface* image_to_surface(Image *image);
 
 void free_image(Image *image);
 

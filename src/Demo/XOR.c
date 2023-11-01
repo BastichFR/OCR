@@ -4,7 +4,8 @@
 // 11 : 0
 
 #include "Demo/XOR.h"
-    
+
+/// @brief Build a neural network to solve the XOR problem
 void build_xor(){
     char* path = "./src/Demo/XOR.data";
     Neural_Network nn = load_nn(path);
@@ -42,7 +43,7 @@ void build_xor(){
     free(values);
     free_xor(nn);
 }
-
+ 
 void free_xor(Neural_Network network){
     free_network(network);
 }

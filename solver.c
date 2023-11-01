@@ -7,28 +7,22 @@
 
 void exit_help(){
 	char help[] = 	"Usage:\n"
-					"--demo\n"
-					"--solve \"path\"\n";
+					"--demo \"XOR\"\n"
+					"--solve <path>\n";
 	errx(EXIT_FAILURE, "%s", help);
 }
 
 
-void exec_demo(int argc)
+void exec_demo(char** argv)
 {
-	if(argc != 2){
+	if (strcmp(argv[2],  "XOR") == 0)
+		build_xor();
+	else
 		exit_help();
-	}
-
-	build_xor();
 }
 
-void solve(int argc, char** argv)
+void solve(char** argv)
 {
-	printf("%d", argc);
-	if(argc != 3){
-		exit_help();
-	}
-
 	size_t len = strlen(argv[2]);
 	char path[len + 1];
 	strcpy(path, argv[2]);
@@ -40,14 +34,14 @@ void solve(int argc, char** argv)
 
 int main(int argc, char** argv){ 
 
-	if(argc < 2){
+	if(argc != 3){
 		exit_help();
 	}
 
 	if (strcmp(argv[1], "--demo") == 0)	{
-		exec_demo(argc);
+		exec_demo(argv);
 	} else if (strcmp(argv[1], "--solve") == 0) {
-        solve(argc, argv);
+        solve(argv);
 	} else {
         exit_help();
 	}

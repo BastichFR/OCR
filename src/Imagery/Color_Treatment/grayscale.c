@@ -1,6 +1,8 @@
 #include "Imagery/Color_Treatment/grayscale.h"
 
-void grayscale(Image *image){
+/// @brief Grayscale an image
+/// @param image The image to grayscale
+void grayscale(Image* image){
 
     Pixel pixel;
     double average;

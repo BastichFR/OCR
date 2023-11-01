@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <err.h>
 
-
 typedef struct Neuron
 {
     double value;
@@ -26,7 +25,6 @@ typedef struct Neural_Network
     size_t nb_layers;
     Layer* layers;
 } Neural_Network;
-
 
 Neuron set_neuron(double value, size_t nb_weights, double* weights, double threshold);
 Layer set_layer(size_t nb_neurons, Neuron* neurons);

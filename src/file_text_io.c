@@ -6,6 +6,10 @@
 
 #define N 9
 
+/// @brief Extract data from a file
+/// @param path The path of the file
+/// @param board The grid to fill
+/// @return EXIT_SUCCESS if the data is extracted, EXIT_FAILURE otherwise
 int extract_data(char path[], size_t board[N][N]){
         
     FILE *file;
@@ -51,9 +55,10 @@ int extract_data(char path[], size_t board[N][N]){
 	return EXIT_SUCCESS;
 }
 
-
-
-
+/// @brief Write data in a file
+/// @param path The path of the file
+/// @param board The grid to write
+/// @return EXIT_SUCCESS if the data is written, EXIT_FAILURE otherwise
 int write_data(char path[], size_t board[N][N]){
 
 	char extension[] = ".result";

@@ -1,6 +1,6 @@
 #include "Imagery/Tools/pixel.h"
 
-// Official doc program
+// Official "SDL2" doc program
 Uint32 getpixel(SDL_Surface *surface, int x, int y) {
     int bpp = surface->format->BytesPerPixel;
     Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
@@ -22,7 +22,7 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y) {
     }
 }
 
-// Official doc program 
+// Official "SDL2" doc program 
 void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
     int bpp = surface->format->BytesPerPixel;
     Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
