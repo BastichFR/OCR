@@ -2,8 +2,6 @@
 
 > Epita's S3 project
 
-
-
 ### Dependencies
 
 #### SDL2

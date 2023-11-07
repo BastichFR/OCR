@@ -1,2 +1,8 @@
+# Prerequisites
 .vscode
+.gitignore
+.clang-format
+
+# Object files
+\build
 *.o
