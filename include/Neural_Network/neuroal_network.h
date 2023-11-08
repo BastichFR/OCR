@@ -7,6 +7,7 @@
 
 typedef struct Neuron
 {
+    double bias;
     double value;
     double threshold;
     double* weights;
@@ -26,7 +27,7 @@ typedef struct Neural_Network
     Layer* layers;
 } Neural_Network;
 
-Neuron set_neuron(double value, size_t nb_weights, double* weights, double threshold);
+Neuron set_neuron(double bias, size_t nb_weights, double* weights, double threshold);
 Layer set_layer(size_t nb_neurons, Neuron* neurons);
 Neural_Network set_network(size_t nb_layers, Layer* layers);
 

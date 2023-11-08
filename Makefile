@@ -26,11 +26,11 @@ build: $(OBJ)
 	@${CC} ${CFLAGS} ${LDFLAGS} -g -o ${NAME} $(OBJ) ${LGTK} ${LSDL}
 
 clean:
-	@echo "make clean"
 	@rm -rf $(BUILD)
 	@rm -f $(NAME)
 
 re: clean build
+	@echo "re done"
 
 run: build
 	./${NAME}
@@ -52,6 +52,11 @@ info:
 	@echo "./solver --demo  <path/to/solve.txt>"
 	@echo "./solver --solve <path/to/solve.png>" 
 	@echo "---------------------------------------- "
+
+demo: build
+	cat grids/grid_00
+	./${NAME} --demo grids/grid_00
+	cat grids/grid_00.result
 
 # Rules	
 $(BUILD)%.o: $(SRC)%.c

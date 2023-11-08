@@ -2,10 +2,11 @@
 
 // Initialize a neuron
 Neuron
-set_neuron(double value, size_t nb_weights, double* weights, double threshold)
+set_neuron(double bias, size_t nb_weights, double* weights, double threshold)
 {
     Neuron neuron;
-    neuron.value = value;
+    neuron.bias = bias;
+    neuron.value = 0;
     neuron.threshold = threshold;
     neuron.nb_weights = nb_weights;
 

@@ -14,7 +14,7 @@ int get_nb_weights(const char* begin, const char* end)
 }
 
 void parse_neuron_line(const char* line,
-                       double* value,
+                       double* bias,
                        double** weights,
                        size_t* nb_weights)
 {
@@ -30,7 +30,7 @@ void parse_neuron_line(const char* line,
         }
 
     size_t index = 0;
-    *value = atof(strtok((char*)begin, "|"));
+    *bias = atof(strtok((char*)begin, "|"));
     char* token = strtok((char*)begin + 1, ",");
     while (token != NULL)
         {
@@ -39,7 +39,7 @@ void parse_neuron_line(const char* line,
             index++;
         }
 
-    *value = atof(line);
+    *bias = atof(line);
 }
 
 Neural_Network load_nn(char* path)
@@ -61,7 +61,7 @@ Neural_Network load_nn(char* path)
     int nb_layers;
     int nb_neurons;
 
-    double value;
+    double bias;
     size_t nb_weights;
     double* weights = NULL;
 
@@ -89,11 +89,11 @@ Neural_Network load_nn(char* path)
                                     getline(&line, &len, file);
 
                                     double* weights = NULL;
-                                    parse_neuron_line(line, &value, &weights,
+                                    parse_neuron_line(line, &bias, &weights,
                                                       &nb_weights);
 
                                     Neuron neuron = set_neuron(
-                                      value, nb_weights, weights, threshold);
+                                      bias, nb_weights, weights, threshold);
                                     neuron.activation = activation;
                                     this_layer.neurons[id_neuron] = neuron;
 

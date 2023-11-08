@@ -39,8 +39,4 @@ void exec_main(const char* path)
     SDL_FreeSurface(surface);
     free_image(&image);
     SDL_Quit();
-
-    // TODO : Leak memories to fix in noise_filter(&image);
-    // TODO : Fix the blackandwhite function
-
 }
