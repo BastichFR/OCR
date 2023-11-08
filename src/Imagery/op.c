@@ -28,19 +28,19 @@ void exec_main(const char* path)
     Image image = create_image(surface);
 
     grayscale(&image);
-
     noise_filter(&image);
-
-    blackandwhite(&image);
-
     edgeDetection(&image);
+    blackandwhite(&image);
 
     surface = image_to_surface(&image);
     Save_SDL_img(surface, path);
 
-    free_image(&image);
 
     SDL_FreeSurface(surface);
-
+    free_image(&image);
     SDL_Quit();
+
+    // TODO : Leak memories to fix in noise_filter(&image);
+    // TODO : Fix the blackandwhite function
+
 }

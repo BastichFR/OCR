@@ -9,7 +9,7 @@ INCLUDE = include
 # Flags
 CC 		= gcc
 CFLAGS 	= -Werror -pedantic -Wall -Wextra -Wabi=11 -I${INCLUDE} -g
-LDFLAGS = -fsanitize=address
+LDFLAGS = #-fsanitize=address
 LDLIBS 	=
 
 # Libs
@@ -40,13 +40,17 @@ info:
 	@echo
 	@echo "-------------- PROJET OCR -------------- "
 	@cat AUTHORS
-	@echo "------------------ RUN ----------------- "
+	@echo "----------------- RUN ------------------ "
 	@echo "make		: display informations & build"
 	@echo "make info	: display informations"
 	@echo "make build	: build the project"
 	@echo "make clean	: clean the project"
 	@echo "make re		: rebuild the project"
 	@echo "make run	: run the project"
+	@echo "---------------- USAGE ----------------- "
+	@echo "./solver --demo  XOR"
+	@echo "./solver --demo  <path/to/solve.txt>"
+	@echo "./solver --solve <path/to/solve.png>" 
 	@echo "---------------------------------------- "
 
 # Rules	
