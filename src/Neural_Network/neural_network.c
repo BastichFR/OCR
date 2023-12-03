@@ -1,51 +1,17 @@
 #include "Neural_Network/neuroal_network.h"
 
-// Initialize a neuron
-Neuron
-set_neuron(double bias, size_t nb_weights, double* weights, double threshold)
-{
-    Neuron neuron;
-    neuron.bias = bias;
-    neuron.value = 0;
-    neuron.threshold = threshold;
-    neuron.nb_weights = nb_weights;
-
-    neuron.weights = (double*)calloc(nb_weights, sizeof(double));
-    if (neuron.weights == NULL)
-        {
-            errx(1, "Error while initiating Neural Network: Neuron");
-        }
-
-    if (weights != NULL)
-        {
-            for (size_t i = 0; i < nb_weights; i++)
-                {
-                    neuron.weights[i] = weights[i];
-                }
-        }
-
-    return neuron;
-}
+// ========================================== Initialization ==========================================
 
 // Initialize a layer
-Layer set_layer(size_t nb_neurons, Neuron* neurons)
+Layer set_layer(size_t previous_size, size_t size)
 {
     Layer layer;
-    layer.nb_neurons = nb_neurons;
+    layer.nb_neurons = size;
 
-    layer.neurons = (Neuron*)calloc(nb_neurons, sizeof(Neuron));
-    if (layer.neurons == NULL)
-        {
-            errx(1, "Error while initiating Neural Network: Layer");
-        }
-
-    if (neurons != NULL)
-        {
-            for (size_t i = 0; i < nb_neurons; i++)
-                {
-                    layer.neurons[i] = neurons[i];
-                }
-        }
+    layer.W = createMatrix(size, previous_size);
+    layer.B = createMatrix(size, 1);
+    layer.Z = createMatrix(size, 1);
+    layer.A = createMatrix(size, 1);
 
     return layer;
 }
@@ -74,20 +40,15 @@ Neural_Network set_network(size_t nb_layers, Layer* layers)
     return network;
 }
 
-// Free memory allocated for a neuron
-void free_neuron(Neuron neuron)
-{
-    free(neuron.weights);
-}
+// =============================================== Free ===============================================
 
 // Free memory allocated for a layer
 void free_layer(Layer layer)
 {
-    for (size_t i = 0; i < layer.nb_neurons; i++)
-        {
-            free_neuron(layer.neurons[i]);
-        }
-    free(layer.neurons);
+    freeMatrix(layer.W);
+    freeMatrix(layer.B);
+    freeMatrix(layer.Z);
+    freeMatrix(layer.A);
 }
 
 // Free memory allocated for a neural network
@@ -100,54 +61,157 @@ void free_network(Neural_Network network)
     free(network.layers);
 }
 
-double activation(Neuron neuron)
+// ======================================= Activation functions =======================================
+
+// Sigmoid function
+double sigmoid(double x)
 {
-    return neuron.value ? neuron.value >= neuron.threshold : 0;
+    return 1 / (1 + exp(-x));
 }
 
-int feedforward(Neural_Network network, size_t nb_values, double* values)
+// Sigmoid derivative function
+double sigmoid_derivative(double x)
 {
-    if (network.layers[0].nb_neurons != nb_values)
-        {
-            errx(1, "Wrong inputs feedforward, invalid entries : values");
-        }
-
-    // Set inputs
-    Layer input = network.layers[0];
-    Neuron* in = input.neurons;
-    for (size_t i = 0; i < input.nb_neurons; i++)
-        in[i].value = values[i];
-
-    // set hidden layers
-    for (size_t id_layer = 1; id_layer < network.nb_layers; id_layer++)
-        {
-            Layer layer = network.layers[id_layer];
-            Layer previous_layer = network.layers[id_layer - 1];
-            for (size_t id_neuron = 0; id_neuron < layer.nb_neurons;
-                 id_neuron++)
-                {
-                    Neuron* neuron = layer.neurons;
-                    neuron[id_neuron].value = 0;
-                    for (size_t id = 0; id < previous_layer.nb_neurons; id++)
-                        {
-                            Neuron p = previous_layer.neurons[id];
-                            double val =
-                              p.activation(p) * neuron[id_neuron].weights[id];
-                            neuron[id_neuron].value += val;
-                        }
-                }
-        }
-
-    // Get output
-    double out_value = 0;
-    Layer output = network.layers[network.nb_layers - 1];
-    Neuron* out = output.neurons;
-    for (size_t i = 0; i < output.nb_neurons; i++)
-        {
-            out_value += out[i].value;
-        }
-
-    return out_value;
+    return sigmoid(x) * (1 - sigmoid(x));
 }
 
-void softmax();
+
+// Print layer
+void print_layer(Layer layer)
+{
+    printf("Layer : \n");
+    printf("W: \n");
+    printMatrix(layer.W);
+    printf("B: \n");
+    printMatrix(layer.B);
+    printf("Z: \n");
+    printMatrix(layer.Z);
+    printf("A: \n");
+    printMatrix(layer.A);
+}
+
+
+// ============================================ Loss function ==========================================
+
+double log_loss(Matrix* y, Matrix* A)
+{
+    double loss = 0;
+
+    for (size_t i = 0; i < y->cols; i++)
+        {
+            loss += y->data[0][i] * log(A->data[0][i]) + (1 - y->data[0][i]) * log(1 - A->data[0][i]);
+        }
+
+    return -loss / y->cols;
+}
+
+// =========================================== Feedforward ============================================
+
+// Feedforward a neural network
+void feedforward(Matrix* data, Neural_Network* network)
+{
+    Layer* layer;
+
+    Matrix* X = data;
+
+    for (size_t c = 0; c < network->nb_layers; c++)
+    {
+        layer = &(network->layers[c]);
+
+        
+
+        layer->Z = addMatrix(dotMatrix(layer->W, X), layer->B);
+        layer->A = funcMatrix(layer->Z, sigmoid);
+
+        X = layer->A;
+    }
+}
+
+
+// ========================================= Gradient functions =======================================
+
+
+Matrix* dW_gradient(Matrix* A, Matrix* X, Matrix* Y)
+{
+    //assert(X->cols == A->rows && A->cols == Y->cols && X->rows == Y->rows);
+
+    Matrix* t0 = transposeMatrix(X);
+    Matrix* t1 = subMatrix(A, Y);
+
+
+    printf("dW_gradient input dimensions:\n");
+    printf("t0: %lu x %lu\n", t0->rows, t0->cols);
+    printf("t1: %lu x %lu\n", t1->rows, t1->cols);
+
+    Matrix* dW = dotMatrix(t1, t0);
+
+    freeMatrix(t0);
+    freeMatrix(t1);
+
+    return dW;
+}
+
+
+Matrix* dB_gradient(Matrix* A, Matrix* Y)
+{
+    //assert(A->rows == Y->rows && A->cols == Y->cols);
+
+    return subMatrix(A, Y);
+}
+
+
+// ========================================= Backpropagation ==========================================
+
+
+void update_parameters(Matrix* dW, Matrix* db, Layer* layer, double learning_rate)
+{
+    double scaling_factor = dW->cols;
+
+    Matrix* scaled_dW = dotScalar(dW, learning_rate/scaling_factor);
+    double scaled_db = -learning_rate/scaling_factor * sumMatrix(db);
+
+
+    Matrix* updated_W = subMatrix(layer->W, scaled_dW);
+    Matrix* updated_B = addScalar(layer->B, scaled_db);
+
+    freeMatrix(scaled_dW);
+    freeMatrix(layer->W);
+    freeMatrix(layer->B);
+
+    layer->W = updated_W;
+    layer->B = updated_B;
+}
+
+
+void backpropagation(Matrix* Y_true, Neural_Network* network, double learning_rate)
+{
+    size_t C = network->nb_layers;
+
+    Layer* layer = &(network->layers[C - 1]);
+    Layer* prev_layer = &(network->layers[C - 2]);
+    
+    Matrix* dZ = subMatrix(layer->A, Y_true);
+
+    // Rétropropagation à travers les couches
+    for (size_t c = C - 1; c > 0; c--)
+    {
+        layer = &(network->layers[c]);
+        prev_layer = &(network->layers[c - 1]);
+
+        Matrix* dW = dW_gradient(prev_layer->A, prev_layer->A, Y_true);
+        Matrix* dB = dB_gradient(prev_layer->A, Y_true);
+
+        // Mise à jour des paramètres de la couche
+        update_parameters(dW, dB, layer, learning_rate);
+
+        Matrix* dZ_prev = dotMatrix(transposeMatrix(layer->W), dZ);
+
+        freeMatrix(dZ);
+        freeMatrix(dW);
+        freeMatrix(dB);
+
+        dZ = dZ_prev;
+    }
+
+    freeMatrix(dZ);
+}

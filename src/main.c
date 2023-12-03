@@ -37,6 +37,8 @@ void exec_solve(char** argv)
     exec_main(path);
 }
 
+#include <math.h>
+
 int main(int argc, char** argv)
 {
     if (argc != 3)

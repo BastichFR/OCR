@@ -1,24 +1,22 @@
 #ifndef NEURAL_NETWORK_H
 #define NEURAL_NETWORK_H
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <stdio.h>
+#include <math.h>
 #include <err.h>
 
-typedef struct Neuron
-{
-    double bias;
-    double value;
-    double threshold;
-    double* weights;
-    size_t nb_weights;
-    double (*activation)(struct Neuron neuron);
-} Neuron;
+#include "Matrix/matrix.h"
 
 typedef struct Layer
 {
     size_t nb_neurons;
-    Neuron* neurons;
+    Matrix* W;
+    Matrix* B;
+    Matrix* Z;
+    Matrix* A;
+
 } Layer;
 
 typedef struct Neural_Network
@@ -27,22 +25,16 @@ typedef struct Neural_Network
     Layer* layers;
 } Neural_Network;
 
-Neuron set_neuron(double bias, size_t nb_weights, double* weights, double threshold);
-Layer set_layer(size_t nb_neurons, Neuron* neurons);
-Neural_Network set_network(size_t nb_layers, Layer* layers);
-
-void free_neuron(Neuron neuron);
+Layer set_layer(size_t previous_size, size_t size);
 void free_layer(Layer layer);
+
+Neural_Network set_network(size_t nb_layers, Layer* layers);
 void free_network(Neural_Network network);
 
+double log_loss(Matrix* y, Matrix* A);
 
-double activation(Neuron neuron);
+void feedforward(Matrix* data, Neural_Network* network);
 
-
-int feedforward(Neural_Network network, size_t nb_values, double* values);
-
-
-void softmax();
-
+void backpropagation(Matrix* y, Neural_Network* network, double learning_rate);
 
 #endif

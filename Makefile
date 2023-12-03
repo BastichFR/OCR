@@ -4,11 +4,12 @@
 SRC		= src/
 BUILD 	= build/
 NAME 	= solver
-INCLUDE = include
+INCLUDE = include/
 
 # Flags
 CC 		= gcc
-CFLAGS 	= -Werror -pedantic -Wall -Wextra -Wabi=11 -I${INCLUDE} -g
+#CFLAGS 	= -Werror -Wall -Wextra -Wabi=11 -I${INCLUDE} -g
+CFLAGS 	= -Wall -Wextra -Wabi=11 -I${INCLUDE} -g
 LDFLAGS = #-fsanitize=address
 LDLIBS 	=
 
@@ -65,4 +66,4 @@ $(BUILD)%.o: $(SRC)%.c
 
 
 
-.PHONY: all build clean re run info
+.PHONY: all build clean re run info demo

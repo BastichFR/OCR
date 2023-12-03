@@ -9,39 +9,35 @@
 void build_xor()
 {
     char* path = "./src/Demo/XOR.data";
+
+    printf("Loading neural network from %s\n", path);
+
     Neural_Network nn = load_nn(path);
+
+    printf("Neural network loaded\n");
 
     show_nn(nn);
 
-    double out = 0;
+    Matrix* X = createMatrix(2, 1);
+    setValue(X, 0, 0, 0);
+    setValue(X, 1, 0, 0);
+    setValue(X, 0, 0, 0);
+    setValue(X, 1, 0, 1);
+    setValue(X, 0, 0, 1);
+    setValue(X, 1, 0, 0);
+    setValue(X, 0, 0, 1);
+    setValue(X, 1, 0, 1);
 
-    size_t len = 2;
-    double* values = (double*)calloc(len, sizeof(double));
-    values[0] = 0;
-    values[1] = 0;
+    Matrix* y = createMatrix(1, 1);
+    setValue(y, 0, 0, 0);
+    setValue(y, 0, 0, 1);
+    setValue(y, 0, 0, 1);
+    setValue(y, 0, 0, 0);
 
-    out = feedforward(nn, 2, values);
-    printf("out XOR(%.2f, %.2f) = %.2f \n", values[0], values[1], out);
+    deep_neural_network(X, y, &nn, 0.1, 10000);
+    
+    show_nn(nn);
 
-    values[0] = 0;
-    values[1] = 1;
-
-    out = feedforward(nn, 2, values);
-    printf("out XOR(%.2f, %.2f) = %.2f \n", values[0], values[1], out);
-
-    values[0] = 1;
-    values[1] = 0;
-
-    out = feedforward(nn, 2, values);
-    printf("out XOR(%.2f, %.2f) = %.2f \n", values[0], values[1], out);
-
-    values[0] = 1;
-    values[1] = 1;
-
-    out = feedforward(nn, 2, values);
-    printf("out XOR(%.2f, %.2f) = %.2f \n", values[0], values[1], out);
-
-    free(values);
     free_xor(nn);
 }
 
