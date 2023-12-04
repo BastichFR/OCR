@@ -1,6 +1,6 @@
 #include "Neural_Network/neuroal_network.h"
 
-// ========================================== Initialization ==========================================
+// ============================== Initialization ==============================
 
 // Initialize a layer
 Layer set_layer(size_t previous_size, size_t size)
@@ -9,7 +9,6 @@ Layer set_layer(size_t previous_size, size_t size)
     layer.nb_neurons = size;
 
     layer.W = createMatrix(size, previous_size);
-    layer.B = createMatrix(size, 1);
     layer.Z = createMatrix(size, 1);
     layer.A = createMatrix(size, 1);
 
@@ -40,13 +39,12 @@ Neural_Network set_network(size_t nb_layers, Layer* layers)
     return network;
 }
 
-// =============================================== Free ===============================================
+// =================================== Free ===================================
 
 // Free memory allocated for a layer
 void free_layer(Layer layer)
 {
     freeMatrix(layer.W);
-    freeMatrix(layer.B);
     freeMatrix(layer.Z);
     freeMatrix(layer.A);
 }
@@ -61,7 +59,7 @@ void free_network(Neural_Network network)
     free(network.layers);
 }
 
-// ======================================= Activation functions =======================================
+// =========================== Activation functions ===========================
 
 // Sigmoid function
 double sigmoid(double x)
@@ -69,12 +67,31 @@ double sigmoid(double x)
     return 1 / (1 + exp(-x));
 }
 
-// Sigmoid derivative function
-double sigmoid_derivative(double x)
-{
-    return sigmoid(x) * (1 - sigmoid(x));
+Matrix* sigmoidPrime(Matrix* matrix) {
+	Matrix* ones = createMatrix(matrix->rows, matrix->cols);
+	fillMatrix(ones, 1);
+
+	Matrix* subtracted = subMatrix(ones, matrix);
+	Matrix* multiplied = multiplyMatrix(matrix, subtracted);
+
+	freeMatrix(ones);
+	freeMatrix(subtracted);
+
+	return multiplied;
 }
 
+Matrix* softmax(Matrix* matrix) {
+
+    Matrix* expo = funcMatrix(matrix, exp);
+    double total = sumMatrix(expo);
+    Matrix* mat = dotScalar(expo, 1 / total);
+
+    freeMatrix(expo);
+
+	return mat;
+}
+
+// =================================== Print ==================================
 
 // Print layer
 void print_layer(Layer layer)
@@ -82,136 +99,138 @@ void print_layer(Layer layer)
     printf("Layer : \n");
     printf("W: \n");
     printMatrix(layer.W);
-    printf("B: \n");
-    printMatrix(layer.B);
     printf("Z: \n");
     printMatrix(layer.Z);
     printf("A: \n");
     printMatrix(layer.A);
 }
 
+// ================================== Predict =================================
 
-// ============================================ Loss function ==========================================
-
-double log_loss(Matrix* y, Matrix* A)
+Matrix* predict(Neural_Network* network, Matrix* input)
 {
-    double loss = 0;
+    feedforward(network, input);
 
-    for (size_t i = 0; i < y->cols; i++)
-        {
-            loss += y->data[0][i] * log(A->data[0][i]) + (1 - y->data[0][i]) * log(1 - A->data[0][i]);
-        }
+    Layer* layer = &(network->layers[network->nb_layers - 1]);
+    Matrix* prediction = copyMatrix(layer->Z);
+    Matrix* result = softmax(prediction);
 
-    return -loss / y->cols;
+    freeMatrix(prediction);
+
+    return result;
 }
 
-// =========================================== Feedforward ============================================
+// ================================ Feedforward ===============================
 
 // Feedforward a neural network
-void feedforward(Matrix* data, Neural_Network* network)
+void feedforward(Neural_Network* network, Matrix* input)
 {
-    Layer* layer;
-
-    Matrix* X = data;
+    Layer* layer = &(network->layers[0]);
+    Matrix* X = input;
 
     for (size_t c = 0; c < network->nb_layers; c++)
     {
         layer = &(network->layers[c]);
 
-        
-
-        layer->Z = addMatrix(dotMatrix(layer->W, X), layer->B);
+        freeMatrix(layer->Z);
+        layer->Z = dotMatrix(layer->W, X);
+        freeMatrix(layer->A);
         layer->A = funcMatrix(layer->Z, sigmoid);
 
         X = layer->A;
     }
 }
 
+// ============================== Backpropagation =============================
 
-// ========================================= Gradient functions =======================================
-
-
-Matrix* dW_gradient(Matrix* A, Matrix* X, Matrix* Y)
+void backpropagation(Neural_Network* network, Matrix* input, Matrix* output, double learning_rate)
 {
-    //assert(X->cols == A->rows && A->cols == Y->cols && X->rows == Y->rows);
+    Layer* final;           // output layer
+    Layer* previous_layer;  // hidden layer
 
-    Matrix* t0 = transposeMatrix(X);
-    Matrix* t1 = subMatrix(A, Y);
-
-
-    printf("dW_gradient input dimensions:\n");
-    printf("t0: %lu x %lu\n", t0->rows, t0->cols);
-    printf("t1: %lu x %lu\n", t1->rows, t1->cols);
-
-    Matrix* dW = dotMatrix(t1, t0);
-
-    freeMatrix(t0);
-    freeMatrix(t1);
-
-    return dW;
-}
-
-
-Matrix* dB_gradient(Matrix* A, Matrix* Y)
-{
-    //assert(A->rows == Y->rows && A->cols == Y->cols);
-
-    return subMatrix(A, Y);
-}
-
-
-// ========================================= Backpropagation ==========================================
-
-
-void update_parameters(Matrix* dW, Matrix* db, Layer* layer, double learning_rate)
-{
-    double scaling_factor = dW->cols;
-
-    Matrix* scaled_dW = dotScalar(dW, learning_rate/scaling_factor);
-    double scaled_db = -learning_rate/scaling_factor * sumMatrix(db);
-
-
-    Matrix* updated_W = subMatrix(layer->W, scaled_dW);
-    Matrix* updated_B = addScalar(layer->B, scaled_db);
-
-    freeMatrix(scaled_dW);
-    freeMatrix(layer->W);
-    freeMatrix(layer->B);
-
-    layer->W = updated_W;
-    layer->B = updated_B;
-}
-
-
-void backpropagation(Matrix* Y_true, Neural_Network* network, double learning_rate)
-{
-    size_t C = network->nb_layers;
-
-    Layer* layer = &(network->layers[C - 1]);
-    Layer* prev_layer = &(network->layers[C - 2]);
-    
-    Matrix* dZ = subMatrix(layer->A, Y_true);
-
-    // Rétropropagation à travers les couches
-    for (size_t c = C - 1; c > 0; c--)
+    for(size_t i = network->nb_layers - 1; i >= 1 ; i--)
     {
-        layer = &(network->layers[c]);
-        prev_layer = &(network->layers[c - 1]);
+        final = &(network->layers[i]);
+        previous_layer = &(network->layers[i - 1]);
 
-        Matrix* dW = dW_gradient(prev_layer->A, prev_layer->A, Y_true);
-        Matrix* dB = dB_gradient(prev_layer->A, Y_true);
+        Matrix* hidden_inputs  = copyMatrix(previous_layer->Z);
+        Matrix* hidden_outputs = copyMatrix(previous_layer->A);
+        Matrix* final_inputs   = copyMatrix(final->Z);
+        Matrix* final_outputs  = copyMatrix(final->A);
 
-        // Mise à jour des paramètres de la couche
-        update_parameters(dW, dB, layer, learning_rate);
+        // Find errors
+        Matrix* output_errors = subMatrix(output, final_outputs);
+        Matrix* transposed_mat = transposeMatrix(final->W);
+        Matrix* hidden_errors = dotMatrix(transposed_mat, output_errors);
+        freeMatrix(transposed_mat);
 
-        Matrix* dZ_prev = dotMatrix(transposeMatrix(layer->W), dZ);
 
-        freeMatrix(dZ);
-        freeMatrix(dW);
-        freeMatrix(dB);
+        // Backpropogate
+        // output_weights = add(
+        //		 output_weights, 
+        //     scale(
+        // 			  net->lr, 
+        //			  dot(
+        // 		 			multiply(
+        // 						output_errors, 
+        //				  	sigmoidPrime(final_outputs)
+        //					), 
+        //					transpose(hidden_outputs)
+        // 				)
+        //		 )
+        // )
+        Matrix* sigmoid_primed_mat = sigmoidPrime(final_inputs);
+        Matrix* multiplied_mat = multiplyMatrix(output_errors, sigmoid_primed_mat);
+        transposed_mat = transposeMatrix(hidden_outputs);
+        Matrix* dot_mat = dotMatrix(multiplied_mat, transposed_mat);
+        Matrix* scaled_mat = dotScalar(dot_mat, learning_rate);
+        Matrix* added_mat = addMatrix(final->W, scaled_mat);
 
-        dZ = dZ_prev;
+        freeMatrix(final->W);
+        final->W = added_mat;
+
+        freeMatrix(sigmoid_primed_mat);
+        freeMatrix(multiplied_mat);
+        freeMatrix(transposed_mat);
+        freeMatrix(dot_mat);
+        freeMatrix(scaled_mat);
+
+    	// hidden_weights = add(
+        // 	 net->hidden_weights,
+        // 	 scale (
+        //			net->learning_rate
+        //    	dot (
+        //				multiply(
+        //					hidden_errors,
+        //					sigmoidPrime(hidden_outputs)	
+        //				)
+        //				transpose(inputs)
+        //      )
+        // 	 )
+        // )
+        // Reusing variables after freeing memory
+        sigmoid_primed_mat = sigmoidPrime(hidden_inputs);
+        multiplied_mat = multiplyMatrix(hidden_errors, sigmoid_primed_mat);
+        transposed_mat = transposeMatrix(input);
+        dot_mat = dotMatrix(multiplied_mat, transposed_mat);
+        scaled_mat = dotScalar(dot_mat, learning_rate);
+        added_mat = addMatrix(previous_layer->W, scaled_mat);
+        freeMatrix(previous_layer->W);
+        previous_layer->W = added_mat;
+
+        freeMatrix(sigmoid_primed_mat);
+        freeMatrix(multiplied_mat);
+        freeMatrix(transposed_mat);
+        freeMatrix(dot_mat);
+        freeMatrix(scaled_mat);
+
+        freeMatrix(hidden_inputs);
+        freeMatrix(hidden_outputs);
+        freeMatrix(final_inputs);
+        freeMatrix(final_outputs);
+        freeMatrix(output_errors);
+        freeMatrix(hidden_errors);
+
+        output = previous_layer->A;
     }
-
-    freeMatrix(dZ);
 }

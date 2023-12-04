@@ -9,34 +9,42 @@
 void build_xor()
 {
     char* path = "./src/Demo/XOR.data";
-
-    printf("Loading neural network from %s\n", path);
-
     Neural_Network nn = load_nn(path);
 
-    printf("Neural network loaded\n");
-
     show_nn(nn);
 
-    Matrix* X = createMatrix(2, 1);
-    setValue(X, 0, 0, 0);
-    setValue(X, 1, 0, 0);
-    setValue(X, 0, 0, 0);
-    setValue(X, 1, 0, 1);
-    setValue(X, 0, 0, 1);
-    setValue(X, 1, 0, 0);
-    setValue(X, 0, 0, 1);
-    setValue(X, 1, 0, 1);
+    Matrix* Input = createMatrix(2, 4);
+    setValue(Input, 0, 0, 0);
+    setValue(Input, 1, 0, 0);
+    setValue(Input, 0, 1, 0);
+    setValue(Input, 1, 1, 1);
+    setValue(Input, 0, 2, 1);
+    setValue(Input, 1, 2, 0);
+    setValue(Input, 0, 3, 1);
+    setValue(Input, 1, 3, 1);
 
-    Matrix* y = createMatrix(1, 1);
-    setValue(y, 0, 0, 0);
-    setValue(y, 0, 0, 1);
-    setValue(y, 0, 0, 1);
-    setValue(y, 0, 0, 0);
 
-    deep_neural_network(X, y, &nn, 0.1, 10000);
+    Matrix* Output = createMatrix(1, 4);
+    setValue(Output, 0, 0, 0);
+    setValue(Output, 0, 1, 1);
+    setValue(Output, 0, 2, 1);
+    setValue(Output, 0, 3, 0);
+
+    deep_neural_network(&nn, Input, Output, 1000, 0.01);
     
+
+    feedforward(&nn, Input);
+    printMatrix(nn.layers[nn.nb_layers - 1].A);
+
     show_nn(nn);
+
+    save_nn(nn, path);
+
+    Matrix* prediction = predict(&nn, Input);
+    printMatrix(prediction);
+
+    freeMatrix(Input);
+    freeMatrix(Output);
 
     free_xor(nn);
 }

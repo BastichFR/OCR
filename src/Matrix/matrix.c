@@ -121,6 +121,28 @@ Matrix* dotMatrix(Matrix* matrix1, Matrix* matrix2)
 
 // =================================================================================================
 
+Matrix* multiplyMatrix(Matrix* matrix1, Matrix* matrix2)
+{
+    if (matrix1->rows != matrix2->rows || matrix1->cols != matrix2->cols)
+        {
+            errx(1, "Error: Matrix dimensions must agree : multiplyMatrix()\n");
+        }
+
+    Matrix* result = createMatrix(matrix1->rows, matrix2->cols);
+
+    for (size_t i = 0; i < matrix1->rows; i++)
+        {
+            for (size_t j = 0; j < matrix1->cols; j++)
+                {
+                    result->data[i][j] = matrix1->data[i][j] * matrix2->data[i][j];
+                }
+        }
+
+    return result;
+}
+
+// =================================================================================================
+
 Matrix* funcMatrix(Matrix* matrix, double (func)(double))
 {
     Matrix* result = createMatrix(matrix->rows, matrix->cols);
@@ -155,34 +177,19 @@ Matrix* transposeMatrix(Matrix* matrix)
 
 // =================================================================================================
 
-Matrix* negMatrix(Matrix* matrix)
+Matrix* copyMatrix(Matrix* matrix)
 {
     Matrix* result = createMatrix(matrix->rows, matrix->cols);
 
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->cols; j++) {
-            result->data[i][j] = -matrix->data[i][j];
+            result->data[i][j] = matrix->data[i][j];
         }
     }
     return result;
 }
 
 // =================================================================================================
-
-Matrix* sumColumns(Matrix* matrix)
-{
-    Matrix* result = createMatrix(1, matrix->cols);
-
-    for (size_t j = 0; j < matrix->cols; j++)
-        {
-            for (size_t i = 0; i < matrix->rows; i++)
-                {
-                    result->data[0][j] += matrix->data[i][j];
-                }
-        }
-
-    return result;
-}
 
 double sumMatrix(Matrix* matrix)
 {
@@ -197,6 +204,19 @@ double sumMatrix(Matrix* matrix)
         }
 
     return sum;
+}
+
+Matrix* fillMatrix(Matrix* matrix, double value)
+{
+    for (size_t i = 0; i < matrix->rows; i++)
+        {
+            for (size_t j = 0; j < matrix->cols; j++)
+                {
+                    matrix->data[i][j] = value;
+                }
+        }
+
+    return matrix;
 }
 
 // =================================================================================================

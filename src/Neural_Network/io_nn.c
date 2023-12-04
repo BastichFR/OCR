@@ -1,5 +1,7 @@
 #include "Neural_Network/io_nn.h"
 
+// ============================== Load ==============================
+
 void parse_neuron_line(const char* line, Layer* layer, const size_t index)
 {
     const char* begin = strchr(line, '[');
@@ -13,7 +15,6 @@ void parse_neuron_line(const char* line, Layer* layer, const size_t index)
         token = strtok(NULL, ",");
 
     }
-    setValue(layer->B, index, 0, atof(line));
 }
 
 Neural_Network load_nn(char* path)
@@ -65,6 +66,43 @@ Neural_Network load_nn(char* path)
     return network;
 }
 
+// ============================== Save ==============================
+
+void save_nn(Neural_Network nn, char* path)
+{
+    FILE* file = fopen(path, "w");
+
+    if (file == NULL) {
+        errx(1, "Error while saving neural network: save file");
+    }
+
+    fprintf(file, "dataIn %ld\n", nn.layers[0].W->rows);
+    fprintf(file, "Layer %ld\n", nn.nb_layers);
+    for (size_t i = 0; i < nn.nb_layers; i++) {
+
+        Layer layer = nn.layers[i];
+        size_t nb_neurons = nn.layers[i].W->cols;
+        fprintf(file, "Neuron %ld\n", nb_neurons);
+        for (size_t j = 0; j < nb_neurons; j++) {
+
+            fprintf(file, "[");
+            for (size_t k = 0; k < layer.W->rows; k++) {
+
+                fprintf(file, "%.2f", layer.W->data[k][j]);
+                if (k < nn.layers[i].W->rows - 1)
+                    fprintf(file, ", ");
+            }
+
+            fprintf(file, "]\n");
+        }
+
+    }
+
+    fclose(file);
+}
+
+// ============================== Show ==============================
+
 void show_nn(Neural_Network nn)
 {
     printf("dataIn %ld\n", nn.layers[0].W->rows);
@@ -76,7 +114,7 @@ void show_nn(Neural_Network nn)
         printf("Neuron %ld\n", nb_neurons);
         for (size_t j = 0; j < nb_neurons; j++) {
 
-            printf("%.2f|[", layer.B->data[0][j]);
+            printf("[");
             for (size_t k = 0; k < layer.W->rows; k++) {
 
                 printf("%.2f", layer.W->data[k][j]);

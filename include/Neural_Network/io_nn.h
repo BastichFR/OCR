@@ -11,6 +11,9 @@
 #include "Neural_Network/neuroal_network.h"
 
 Neural_Network load_nn(char* path);
+
+void save_nn(Neural_Network nn, char* path);
+
 void show_nn(Neural_Network nn);
 
 #endif

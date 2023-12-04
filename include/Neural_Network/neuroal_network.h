@@ -13,7 +13,6 @@ typedef struct Layer
 {
     size_t nb_neurons;
     Matrix* W;
-    Matrix* B;
     Matrix* Z;
     Matrix* A;
 
@@ -31,10 +30,10 @@ void free_layer(Layer layer);
 Neural_Network set_network(size_t nb_layers, Layer* layers);
 void free_network(Neural_Network network);
 
-double log_loss(Matrix* y, Matrix* A);
+Matrix* predict(Neural_Network* network, Matrix* input);
 
-void feedforward(Matrix* data, Neural_Network* network);
+void feedforward(Neural_Network* network, Matrix* input);
 
-void backpropagation(Matrix* y, Neural_Network* network, double learning_rate);
+void backpropagation(Neural_Network* network, Matrix* input, Matrix* output, double learning_rate);
 
 #endif
