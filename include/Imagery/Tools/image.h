@@ -20,14 +20,21 @@ typedef struct {
     unsigned int height;
     int          average;
     Pixel**      pixels;
+    char*        path;
 } Image;
 
-Image create_image(SDL_Surface *surface);
+Image create_image(SDL_Surface *surface, char* path);
 
-Image create_empty_image(size_t width, size_t height);
+Image create_empty_image(size_t width, size_t height, char* path);
 
 SDL_Surface* image_to_surface(Image *image);
 
 void free_image(Image *image);
+
+void pixel_same_value(Pixel *pixel, unsigned int value);
+
+int* pixel_neighbors(Image *image,unsigned int x,unsigned int y);
+
+Image copy_image(Image *copiedImage);
 
 #endif // SCREEN_H

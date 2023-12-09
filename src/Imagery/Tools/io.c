@@ -12,10 +12,10 @@ SDL_Surface* Load_SDL_img(const char* path)
     return surface;
 }
 
-int Save_SDL_img(SDL_Surface* image, const char* path)
+int Save_SDL_img(SDL_Surface* image, const char* path, int i)
 {
     char extension[] = ".result";
-    char new_path[strlen(path) + strlen(extension) + 1];
+    char new_path[strlen(path) + strlen(extension) + 2];
 
     char* dot = strrchr(path, '.');
 
@@ -29,7 +29,10 @@ int Save_SDL_img(SDL_Surface* image, const char* path)
             *x = extension[i];
             x++;
         }
-
+    
+    *x = i + '0';
+    x++;
+    
     while (*dot != 0)
         {
             *x = *dot;

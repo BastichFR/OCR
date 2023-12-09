@@ -13,7 +13,7 @@ void blackandwhite(Image* image)
                     pixel = &image->pixels[x][y];
 
                     if ((pixel->red + pixel->green + pixel->blue) / 3
-                        >= image->average)
+                        >= 127)
                         {
                             pixel->red = 255;
                             pixel->green = 255;

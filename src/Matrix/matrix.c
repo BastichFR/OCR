@@ -14,6 +14,8 @@ void setValue(Matrix* matrix, size_t row, size_t col, double value)
 
 // =================================================================================================
 
+
+
 Matrix* addScalar(Matrix* matrix, double scalar)
 {
     Matrix* result = createMatrix(matrix->rows, matrix->cols);

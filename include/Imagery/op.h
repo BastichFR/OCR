@@ -11,9 +11,13 @@
 #include "Imagery/Tools/image.h"
 
 #include "Imagery/Color_Treatment/grayscale.h"
+#include "Imagery/Color_Treatment/contrast.h"
+#include "Imagery/Color_Treatment/treshold.h"
 #include "Imagery/Color_Treatment/noise_filter.h"
 #include "Imagery/Color_Treatment/blackandwhite.h"
 #include "Imagery/Color_Treatment/edge_detection.h"
+
+#include "Imagery/Detection/detection.h"
 
 void init_sdl();
 
