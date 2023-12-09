@@ -7,12 +7,14 @@
 #include <math.h>
 #include <err.h>
 
+#include "Neural_Network/activation.h"
 #include "Matrix/matrix.h"
 
 typedef struct Layer
 {
     size_t nb_neurons;
     Matrix* W;
+    Matrix* B;
     Matrix* Z;
     Matrix* A;
 
@@ -30,10 +32,10 @@ void free_layer(Layer layer);
 Neural_Network set_network(size_t nb_layers, Layer* layers);
 void free_network(Neural_Network network);
 
-Matrix* predict(Neural_Network* network, Matrix* input);
+void initiate_nn(Neural_Network network);
 
-void feedforward(Neural_Network* network, Matrix* input);
+Matrix* feedforward(Neural_Network* network, Matrix* input);
 
-void backpropagation(Neural_Network* network, Matrix* input, Matrix* output, double learning_rate);
+void backpropagation(Neural_Network* network, Matrix* data, int expected, double learning_rate);
 
 #endif

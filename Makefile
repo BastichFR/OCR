@@ -59,6 +59,9 @@ demo: build
 	./${NAME} --demo grids/grid_00
 	cat grids/grid_00.result
 
+clang:
+	clang-format -i $(FILES)
+
 # Rules	
 $(BUILD)%.o: $(SRC)%.c
 	@mkdir -p $(@D)

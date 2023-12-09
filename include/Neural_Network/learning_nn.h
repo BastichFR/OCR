@@ -6,6 +6,6 @@
 #include "Matrix/matrix.h"
 
 
-void deep_neural_network(Neural_Network* network, Matrix* Input, Matrix* Output, size_t n_iter, double learning_rate) ;
+void deep_neural_network(Neural_Network* network, Matrix* Input, int Output, size_t n_iter, double learning_rate) ;
 
 #endif // LEARNING_NN_H
